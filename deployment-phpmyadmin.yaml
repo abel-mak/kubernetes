@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: phpmyadmin-deployment
+spec:
+  selector:
+    matchLabels:
+      app: phpmyadmin-app
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: phpmyadmin-app
+    spec:
+      containers:
+        - name: phpmyadmin-cont
+          image: phpmyadmin-docker
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 80
+              #          volumeMounts:
+              #            - mountPath: /sys/
+              #              name: sys
+              #      volumes:
+              #        - name: sys

@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress
+spec:
+  selector:
+    matchLabels:
+      app: wordpress-app
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: wordpress-app
+    spec:
+      containers:
+        - name: wordpress
+          image: wordpress-docker
+          #command: ["sleep"]
+          #args: ["20"]
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - mountPath: /sys/
+              name: sys
+      volumes:
+        - name: sys
