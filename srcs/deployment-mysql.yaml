@@ -1,0 +1,38 @@
+apiVersion: apps/v1 
+kind: Deployment
+metadata:
+  name: mysql
+spec:
+  selector:
+    matchLabels:
+      app: mysql
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+        - image: mysql-docker
+          name: mysql
+          imagePullPolicy: Never
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - chmod +x /check.sh && ./check.sh
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          ports:
+            - containerPort: 3306
+              name: mysql
+          volumeMounts:
+            - name: mysql-persistent-storage
+              mountPath: /var/lib/mysql
+      volumes:
+        - name: mysql-persistent-storage
+          persistentVolumeClaim:
+            claimName: mysql-pv-claim
+      restartPolicy: Always

@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+spec:
+  selector:
+    matchLabels:
+      app: nginx-app
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: nginx-app
+    spec:
+      containers:
+        - name: nginx
+          image: nginx-docker
+          imagePullPolicy: Never
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - chmod +x /check.sh && ./check.sh
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          ports:
+            - name: port1
+              containerPort: 80
+            - name: port2
+              containerPort: 443
+            - name: port3
+              containerPort: 22
+      restartPolicy: Always

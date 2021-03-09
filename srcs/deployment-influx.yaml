@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: influxdb
+spec:
+  selector:
+    matchLabels:
+      app: influxdb
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: influxdb
+    spec:
+      containers:
+        - image: influx-docker
+          name: influx
+          imagePullPolicy: Never
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - chmod +x /check.sh && ./check.sh
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          ports:
+            - containerPort: 8086
+              name: influx-port
+          volumeMounts:
+            - name: influx-persistent-storage
+              mountPath: /root/.influxdb/
+      volumes:
+        - name: influx-persistent-storage
+          persistentVolumeClaim:
+            claimName: pvc-influx
+      restartPolicy: Always
